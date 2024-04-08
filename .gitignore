@@ -1,0 +1,15 @@
+# Xcode
+.DS_Store
+*/.DS_Store
+xcuserdata/
+*.xcodeproj/xcuserdata/
+
+# Build products
+build/
+DerivedData/
+*.ipa
+*.xcarchive
+
+# CocoaPods
+Pods/
+Podfile.lock

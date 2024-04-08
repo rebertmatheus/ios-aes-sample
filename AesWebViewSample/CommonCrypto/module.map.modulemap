@@ -1,0 +1,12 @@
+//
+//  module.map.modulemap
+//  AesWebViewSample
+//
+//  Created by Rebert Matheus Teixeira on 03/04/24.
+//
+
+module CommonCrypto [system] {
+    header "/usr/include/CommonCrypto/CommonCrypto.h"
+    link "CommonCrypto"
+    export *
+}
