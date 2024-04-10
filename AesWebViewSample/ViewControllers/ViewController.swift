@@ -18,10 +18,10 @@ final class ViewController: UIViewController {
 
     let mainView: MainView = MainView()
     
-    let name: String = "John the Ripper"
-    let id: String = "11999999999"
+    let number: String = "11111111111"
+    let document: String = "48707475020"
     let type: String = "Default"
-    let keyString = "ASERTYUJHGFDVB1234567890*h%gDE3@"
+    let secret = "YOUR_SECRET_KEY"
     var iv: [UInt8] = []
     
     override func viewDidLoad() {
@@ -30,38 +30,36 @@ final class ViewController: UIViewController {
         self.view = mainView
         self.delegate = mainView
         
-        let input = "\(name)\(id)\(type)"
-        iv = generateRandomIV()
-        if let encryptedInput = aesEncrypt(input: input, keyString: keyString, iv: iv) {
-            delegate?.updateAesResult(result: encryptedInput)
-            print("Retorno Encrypt: \(encryptedInput)")
-            
-            print("------Iniciando Decrypt------")
-            if let decryptedData = aesDecrypt(encryptedBase64String: encryptedInput, keyString: keyString, iv: iv) {
-                print("Retorno Decrypt: \(decryptedData)")
-            }
-        }
+        let data: [String: Any] = [
+            "number": "\(number)",
+            "document": "\(document)",
+            "type": "\(type)"
+        ]
         
+        iv = generateRandomIV()
+        if let encryptedInput = aesEncrypt(data: data, aesSecret: secret, iv: iv) {
+            delegate?.updateAesResult(result: encryptedInput)
+        }
     }
     
-    private func aesEncrypt(input: String, keyString: String, iv: [UInt8]) -> String? {
-        if let keyData = keyString.data(using: .utf8) {
-            let key: [UInt8] = keyData.bytes
+    private func aesEncrypt(data: [String: Any], aesSecret: String, iv: [UInt8]) -> String? {
             do {
-                let encrypted = try AES(key: key, blockMode: CBC(iv: iv), padding: .pkcs7).encrypt(Array(input.utf8))
+                let jsonData = try JSONSerialization.data(withJSONObject: data)
+                let jsonString = String(data: jsonData, encoding: .utf8)!
+                
+                print("aesSecret.bytes: \(String(describing: aesSecret.bytes))")
+                
+                let encrypted = try AES(key: aesSecret.bytes, blockMode: CBC(iv: iv), padding: .pkcs7).encrypt(Array(jsonString.utf8))
                 let encryptedData = Data(encrypted)
-                print("Input: \(input)")
-                print("key: \(key)")
-                print("IV: \(iv)")
-                return encryptedData.base64EncodedString()
+
+                print("encryptedData: \(String(describing: encrypted))")
+                print("encryptedBASE64URL: \(String(describing: encryptedData.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")))")
+
+                return encryptedData.base64EncodedString().replacingOccurrences(of: "+", with: "-").replacingOccurrences(of: "/", with: "_").replacingOccurrences(of: "=", with: "")
             } catch {
                 debugPrint("Error: \(error)")
                 return nil
             }
-        } else {
-            print("Erro ao converter a string para dados.")
-            return nil
-        }
     }
     
     private func aesDecrypt(encryptedBase64String: String, keyString: String, iv: [UInt8]) -> String? {
@@ -90,8 +88,10 @@ final class ViewController: UIViewController {
         let ivSize = AES.blockSize
         var iv = [UInt8](repeating: 0, count: ivSize)
         for i in 0..<ivSize {
-            iv[i] = UInt8.random(in: UInt8.min..<UInt8.max)
+//            iv[i] = UInt8.random(in: UInt8.min..<UInt8.max)
+            iv[i] = 0
         }
+//        print("IV: \(String(describing: iv))")
         return iv
     }
 }

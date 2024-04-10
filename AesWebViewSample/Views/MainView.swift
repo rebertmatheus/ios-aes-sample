@@ -9,7 +9,6 @@ import UIKit
 
 class MainView: UIView {
     
-    
     var aesResultLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -33,15 +32,15 @@ class MainView: UIView {
     
     private func setupView() {
         addSubviews(
-            aesResultLabel
+//            aesResultLabel
         )
         addConstraints()
     }
     
     private func addConstraints() {
         NSLayoutConstraint.activate([
-            aesResultLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
-            aesResultLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
+//            aesResultLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+//            aesResultLabel.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
     }
 }
